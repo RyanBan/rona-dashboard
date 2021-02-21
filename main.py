@@ -2,7 +2,13 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
-from data import countries_df, totals_df
+from data import (
+    countries_df,
+    totals_df,
+    dropdown_options,
+    make_global_df,
+    make_country_df,
+)
 from builders import make_table
 from dash.dependencies import Input, Output
 
@@ -12,6 +18,9 @@ stylesheets = [
 ]
 
 app = dash.Dash(__name__, external_stylesheets=stylesheets)
+
+# expose the server for heroku
+server = app.server
 
 bubble_map = px.scatter_geo(
     countries_df,
@@ -87,10 +96,17 @@ app.layout = html.Div(
             children=[
                 html.Div(children=[dcc.Graph(figure=bars_graph)]),
                 html.Div(
+                    style={"grid-column": "span 3"},
                     children=[
-                        dcc.Input(placeholder="What is your name?", id="hello-input"),
-                        html.H2(children="Hello anonymous", id="hello-output"),
-                    ]
+                        dcc.Dropdown(
+                            id="country",
+                            options=[
+                                {"label": country, "value": country}
+                                for country in dropdown_options
+                            ],
+                        ),
+                        dcc.Graph(id="country_graph"),
+                    ],
                 ),
             ],
         ),
@@ -98,14 +114,32 @@ app.layout = html.Div(
 )
 
 
-@app.callback(Output("hello-output", "children"), [Input("hello-input", "value")])
+@app.callback(Output("country_graph", "figure"), [Input("country", "value")])
 def update_hello(value):
-    if value is None:
-        return "Hello Anonymous"
+    if value:
+        df = make_country_df(value)
     else:
-        return f"Hello {value}"
+        df = make_global_df()
+    fig = px.line(
+        df,
+        x="index",
+        y=["confirmed", "deaths", "recovered"],
+        template="plotly_dark",
+        labels={"value": "Cases", "variable": "Condition", "index": "Date"},
+        hover_data={"value": ":,", "variable": False, "index": False},
+        color_discrete_map={
+            "confirmed": "#e74c3c",
+            "deaths": "#8e44ad",
+            "recovered": "#27ae60",
+        },
+    )
+    fig.update_xaxes(rangeslider_visible=True)
+    # fig["data"][0]["line"]["color"] = "#e74c3c"
+    # fig["data"][1]["line"]["color"] = "#8e44ad"
+    # fig["data"][2]["line"]["color"] = "#27ae60"
+    return fig
 
 
 # map_figure = px.scatter
-if __name__ == "__main__":
-    app.run_server(debug=True)
+# if __name__ == "__main__":
+#     app.run_server(debug=True)
