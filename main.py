@@ -19,6 +19,8 @@ stylesheets = [
 
 app = dash.Dash(__name__, external_stylesheets=stylesheets)
 
+app.title = "Rona Dashboard"
+
 # expose the server for heroku
 server = app.server
 
@@ -99,6 +101,12 @@ app.layout = html.Div(
                     style={"grid-column": "span 3"},
                     children=[
                         dcc.Dropdown(
+                            style={
+                                "width": 320,
+                                "margin": "0 auto",
+                                "color": "black",
+                            },
+                            placeholder="Select a Country",
                             id="country",
                             options=[
                                 {"label": country, "value": country}
