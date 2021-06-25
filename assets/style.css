@@ -1,0 +1,40 @@
+/* linegraph dropdown style */
+
+#country .Select-value-label {
+    color: white;
+}
+
+#country .Select-value-label {
+    color: white;
+}
+
+#country .VirtualizedSelectFocusedOption {
+    background-color: #333;
+    color: red
+  }
+#country .Select-menu-outer {
+    background-color: #111111;
+}
+
+
+/* scrollbar style */
+
+body::-webkit-scrollbar {
+    width: 0;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+tbody::-webkit-scrollbar {
+    background:linear-gradient(#e74c3c, #27ae60);
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 20px;
+}
+
+tbody::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 100px;
+}

@@ -5,11 +5,11 @@ def make_table(df):
     return html.Table(
         children=[
             html.Thead(
-                style={"display": "block", "marginBottom": 25},
+                style={"display": "block", "marginBottom": 25, "padding-right": "10px"},
                 children=[
                     html.Tr(
                         children=[
-                            html.Th(column_name.replace("_", " "))
+                            html.Th(column_name.split("_")[0])
                             for column_name in df.columns
                         ],
                         style={
@@ -25,7 +25,9 @@ def make_table(df):
                 style={
                     "maxHeight": "50vh",
                     "display": "block",
-                    "overflow": "scroll",
+                    "overflow-y": "scroll",
+                    "overflow-x": "hidden",
+                    
                 },
                 children=[
                     html.Tr(

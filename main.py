@@ -31,7 +31,7 @@ bubble_map = px.scatter_geo(
     color="Confirmed",
     locations="Country_Region",
     locationmode="country names",
-    size_max=40,
+    size_max=90,
     title="Confirmed By Country",
     template="plotly_dark",
     color_continuous_scale=px.colors.sequential.Oryel,
@@ -45,7 +45,7 @@ bubble_map = px.scatter_geo(
 )
 
 bubble_map.update_layout(
-    margin=dict(l=0, r=0, t=50, b=0), coloraxis_colorbar=dict(xanchor="left", x=0)
+    margin=dict(l=0, r=0, t=30, b=0), coloraxis_colorbar=dict(xanchor="left", x=0)
 )
 
 
@@ -59,7 +59,6 @@ bars_graph = px.bar(
     labels={"condition": "Condition", "count": "Count", "color": "Condition"},
 )
 
-# bars_graph.update_layout(xaxis=dict(title="Condition"), yaxis=dict(title="Count"))
 bars_graph.update_traces(marker_color=["#e74c3c", "#8e44ad", "#27ae60"])
 
 app.layout = html.Div(
@@ -68,6 +67,7 @@ app.layout = html.Div(
         "minHeight": "100vh",
         "backgroundColor": "#111111",
         "color": "white",
+        "padding": "0 10%"
     },
     children=[
         html.Header(
@@ -78,7 +78,8 @@ app.layout = html.Div(
             style={
                 "display": "grid",
                 "gap": 50,
-                "gridTemplateColumns": "repeat(4, 1fr)",
+                "gridTemplateColumns": "repeat(5, 1fr)",
+                "margin":"5% 0"
             },
             children=[
                 # html.Div(children=[dcc.Graph(figure=bubble_map)]),
@@ -86,17 +87,21 @@ app.layout = html.Div(
                     style={"grid-column": "span 3"},
                     children=[dcc.Graph(figure=bubble_map)],
                 ),
-                html.Div(children=[make_table(countries_df)]),
+                html.Div(
+                    style={
+                        "grid-column": "span 2",
+                    },
+                    children=[make_table(countries_df)]
+                ),
             ],
         ),
         html.Div(
             style={
                 "display": "grid",
                 "gap": 50,
-                "gridTemplateColumns": "repeat(4, 1fr)",
+                "gridTemplateColumns": "repeat(5, 1fr)",
             },
             children=[
-                html.Div(children=[dcc.Graph(figure=bars_graph)]),
                 html.Div(
                     style={"grid-column": "span 3"},
                     children=[
@@ -104,7 +109,8 @@ app.layout = html.Div(
                             style={
                                 "width": 320,
                                 "margin": "0 auto",
-                                "color": "black",
+                                "color": "#rgb(242, 245, 250)",
+                                "backgroundColor": "#111111",
                             },
                             placeholder="Select a Country",
                             id="country",
@@ -116,6 +122,10 @@ app.layout = html.Div(
                         dcc.Graph(id="country_graph"),
                     ],
                 ),
+                html.Div(
+                    style={"grid-column": "span 2"},
+                    children=[dcc.Graph(figure=bars_graph)]
+                ),
             ],
         ),
     ],
@@ -123,7 +133,7 @@ app.layout = html.Div(
 
 
 @app.callback(Output("country_graph", "figure"), [Input("country", "value")])
-def update_hello(value):
+def update_line_graph(value):
     if value:
         df = make_country_df(value)
     else:
@@ -142,7 +152,7 @@ def update_hello(value):
         },
     )
     fig.update_xaxes(rangeslider_visible=True)
-    # fig["data"][0]["line"]["color"] = "#e74c3c"
-    # fig["data"][1]["line"]["color"] = "#8e44ad"
-    # fig["data"][2]["line"]["color"] = "#27ae60"
     return fig
+#on flask
+# if __name__ == "__main__":
+#     app.run_server(debug=True)
